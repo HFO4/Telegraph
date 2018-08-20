@@ -6,6 +6,7 @@
 
 
     <link rel="stylesheet" href="chat.css">
+    <link rel="stylesheet" href="animate.css">
 
 </head>
 
@@ -37,14 +38,14 @@
 
         function addTextMsg(content,avatar) {
         	$(".empty").remove();
-            $(".active-chat").append("<div class=\"line\"><div class=\"avatar\" style=\"float: left;\"><img src=\"../../avatar/"+avatar+".jpg\" class=\"avatar\"></div><div class=\"rowl\"><div class=\"bubble you bb\">"+content+"</div></div></div>");
+            $(".active-chat").append("<div class=\"line animated fadeInLeft\"><div class=\"avatar\" style=\"float: left;\"><img src=\"../../avatar/"+avatar+".jpg\" class=\"avatar\"></div><div class=\"rowl\"><div class=\"bubble you bb\">"+content+"</div></div></div>");
             var h = $(document).height();
             $(document).scrollTop(h);
         }
 
         function addSelfTextMsg(content,avatar) {
         	$(".empty").remove();
-			$(".active-chat").append("<div class=\"line\"><div class=\"avatar\" style=\"float: right;\"><img src=\"../../avatar/"+avatar+".jpg\" class=\"avatar\"></div><div class=\"row\"><div class=\"bubble me bb\">"+content+"</div></div></div>");
+			$(".active-chat").append("<div class=\"line animated fadeInRight\"><div class=\"avatar\" style=\"float: right;\"><img src=\"../../avatar/"+avatar+".jpg\" class=\"avatar\"></div><div class=\"row\"><div class=\"bubble me bb\">"+content+"</div></div></div>");
             var h = $(document).height();
             $(document).scrollTop(h);
         }

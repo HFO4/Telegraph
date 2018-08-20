@@ -206,62 +206,7 @@ body {
   display: block;
   margin-top: 20px;
 }
-.container .right .chat.active-chat .bubble {
-  -moz-transition-timing-function: cubic-bezier(0.4, -0.04, 1, 1);
-  -o-transition-timing-function: cubic-bezier(0.4, -0.04, 1, 1);
-  -webkit-transition-timing-function: cubic-bezier(0.4, -0.04, 1, 1);
-  transition-timing-function: cubic-bezier(0.4, -0.04, 1, 1);
-}
-.container .right .chat.active-chat .bubble:nth-of-type(1) {
-  -moz-animation-duration: 0.15s;
-  -webkit-animation-duration: 0.15s;
-  animation-duration: 0.15s;
-}
-.container .right .chat.active-chat .bubble:nth-of-type(2) {
-  -moz-animation-duration: 0.3s;
-  -webkit-animation-duration: 0.3s;
-  animation-duration: 0.3s;
-}
-.container .right .chat.active-chat .bubble:nth-of-type(3) {
-  -moz-animation-duration: 0.45s;
-  -webkit-animation-duration: 0.45s;
-  animation-duration: 0.45s;
-}
-.container .right .chat.active-chat .bubble:nth-of-type(4) {
-  -moz-animation-duration: 0.6s;
-  -webkit-animation-duration: 0.6s;
-  animation-duration: 0.6s;
-}
-.container .right .chat.active-chat .bubble:nth-of-type(5) {
-  -moz-animation-duration: 0.75s;
-  -webkit-animation-duration: 0.75s;
-  animation-duration: 0.75s;
-}
-.container .right .chat.active-chat .bubble:nth-of-type(6) {
-  -moz-animation-duration: 0.9s;
-  -webkit-animation-duration: 0.9s;
-  animation-duration: 0.9s;
-}
-.container .right .chat.active-chat .bubble:nth-of-type(7) {
-  -moz-animation-duration: 1.05s;
-  -webkit-animation-duration: 1.05s;
-  animation-duration: 1.05s;
-}
-.container .right .chat.active-chat .bubble:nth-of-type(8) {
-  -moz-animation-duration: 1.2s;
-  -webkit-animation-duration: 1.2s;
-  animation-duration: 1.2s;
-}
-.container .right .chat.active-chat .bubble {
-  -moz-animation-duration: 1.35s;
-  -webkit-animation-duration: 1.35s;
-  animation-duration: 1.35s;
-}
-.container .right .chat.active-chat .bubble:nth-of-type(10) {
-  -moz-animation-duration: 1.5s;
-  -webkit-animation-duration: 1.5s;
-  animation-duration: 1.5s;
-}
+
 .container .right .write {
   position: absolute;
   bottom: 29px;

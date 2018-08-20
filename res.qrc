@@ -14,5 +14,6 @@
         <file>chat/chat.css</file>
         <file>chat/chat.html</file>
         <file>chat/jquery.min.js</file>
+        <file>chat/animate.css</file>
     </qresource>
 </RCC>

@@ -35,10 +35,10 @@ void::Home::changeSelected(){
         while (i.hasNext()) {
             Message msg = i.next();
             if(msg.selfsend){
-                chat->page()->runJavaScript("addSelfTextMsg('"+msg.body+"','"+msg.avatar+"')");
+                chat->page()->runJavaScript("addSelfTextMsg('"+msg.body.toHtmlEscaped()+"','"+msg.avatar+"')");
             }else{
                 if(currentUser == msg.from){
-                    chat->page()->runJavaScript("addTextMsg('"+msg.body+"','"+usernameAvatar[msg.from]+"')");
+                    chat->page()->runJavaScript("addTextMsg('"+msg.body.toHtmlEscaped()+"','"+usernameAvatar[msg.from]+"')");
                 }else{
 
                 }
@@ -105,11 +105,11 @@ void Home::updateList(QJsonObject list){
 
 void Home::newMsg(Message * msg){
     if(msg->selfsend){
-        chat->page()->runJavaScript("addSelfTextMsg('"+msg->body+"','"+msg->avatar+"')");
+        chat->page()->runJavaScript("addSelfTextMsg('"+msg->body.toHtmlEscaped()+"','"+msg->avatar+"')");
     }else{
         if(currentUser == msg->from){
             qDebug()<<"new Msg";
-            chat->page()->runJavaScript("addTextMsg('"+msg->body+"','"+usernameAvatar[msg->from]+"')");
+            chat->page()->runJavaScript("addTextMsg('"+msg->body.toHtmlEscaped()+"','"+usernameAvatar[msg->from]+"')");
         }else{
 
         }
