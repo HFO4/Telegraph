@@ -5,6 +5,10 @@
 #include <QJsonParseError>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QBuffer>
+#include <QImage>
+#include <QFileInfo>
+#include <QPixmap>
 
 MessageThread::MessageThread()
 {
@@ -55,6 +59,9 @@ void MessageThread::Receive(QString data){
                     msgHandler(obj);
                 }else if(value.toString()=="auth"){
                     //addNewUser(obj,pClient);
+                }else if(value.toString()=="newImg"){
+                    qDebug()<<"newImgMsg";
+                    imgHandler(obj);
                 }
             }
         }
@@ -67,6 +74,10 @@ void MessageThread::msgHandler(QJsonObject data){
     Message* msg = new Message("text",data.value("body").toString(),data.value("from").toString(),userName,0);
     emit newMsg(msg);
 }
+void MessageThread::imgHandler(QJsonObject data){
+    Message* msg = new Message("img",data.value("body").toString(),data.value("from").toString(),userName,0);
+    emit newMsg(msg);
+}
 
 void MessageThread::sendMsg(QString to, QString body, QString type, QString from){
     QJsonObject newMessage;
@@ -75,6 +86,32 @@ void MessageThread::sendMsg(QString to, QString body, QString type, QString from
     msgData.insert("to",to);
     msgData.insert("from",from);
     msgData.insert("body",body);
+    newMessage.insert("data",msgData);
+    QJsonDocument document;
+    document.setObject(newMessage);
+    QByteArray byteArray = document.toJson(QJsonDocument::Compact);
+    QString strJson(byteArray);
+    socket->sendTextMessage(strJson.toUtf8());
+    socket->flush();
+}
+
+void MessageThread::sendImg(QString to,QString path,QString from,QString selfAvatar){
+    QFileInfo fileinfo = QFileInfo(path);
+    QImage image(path);
+    QByteArray ba;
+    QBuffer buf(&ba);
+    image.save(&buf,fileinfo.suffix().toLatin1());
+    QByteArray hexed = ba.toBase64();
+    buf.close();
+    Message *msg = new Message("img",QString(hexed),from,to,1);
+    msg->avatar = selfAvatar;
+    emit newMsg(msg);
+    QJsonObject newMessage;
+    QJsonObject msgData;
+    newMessage.insert("action","sendImg");
+    msgData.insert("to",to);
+    msgData.insert("from",from);
+    msgData.insert("body",QString(hexed));
     newMessage.insert("data",msgData);
     QJsonDocument document;
     document.setObject(newMessage);

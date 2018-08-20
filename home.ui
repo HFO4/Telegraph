@@ -105,14 +105,7 @@
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout">
           <item>
-           <widget class="QTextEdit" name="textEdit_2">
-            <property name="baseSize">
-             <size>
-              <width>0</width>
-              <height>0</height>
-             </size>
-            </property>
-           </widget>
+           <widget class="QPlainTextEdit" name="textEdit_2"/>
           </item>
           <item>
            <layout class="QVBoxLayout" name="verticalLayout_9">

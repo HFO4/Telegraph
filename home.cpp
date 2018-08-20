@@ -8,6 +8,8 @@
 #include <QJsonArray>
 #include <QListWidgetItem>
 #include <QList>
+#include <QFileDialog>
+
 #pragma execution_character_set("utf-8")
 Home::Home(QWidget *parent) :
     QWidget(parent),
@@ -34,13 +36,26 @@ void::Home::changeSelected(){
         QListIterator<Message> i(messageList[currentUser]);
         while (i.hasNext()) {
             Message msg = i.next();
-            if(msg.selfsend){
-                chat->page()->runJavaScript("addSelfTextMsg('"+msg.body.toHtmlEscaped()+"','"+msg.avatar+"')");
-            }else{
-                if(currentUser == msg.from){
-                    chat->page()->runJavaScript("addTextMsg('"+msg.body.toHtmlEscaped()+"','"+usernameAvatar[msg.from]+"')");
+            if(msg.type=="img"){
+                if(msg.selfsend){
+                    chat->page()->runJavaScript("addSelfImgMsg('"+msg.body.toHtmlEscaped()+"','"+msg.avatar+"')");
                 }else{
+                    if(currentUser == msg.from){
+                        qDebug()<<"new Msg";
+                        chat->page()->runJavaScript("addImgMsg('"+msg.body.toHtmlEscaped()+"','"+usernameAvatar[msg.from]+"')");
+                    }else{
 
+                    }
+                }
+            }else{
+                if(msg.selfsend){
+                    chat->page()->runJavaScript("addSelfTextMsg('"+msg.body.toHtmlEscaped()+"','"+msg.avatar+"')");
+                }else{
+                    if(currentUser == msg.from){
+                        chat->page()->runJavaScript("addTextMsg('"+msg.body.toHtmlEscaped()+"','"+usernameAvatar[msg.from]+"')");
+                    }else{
+
+                    }
                 }
             }
         }
@@ -59,6 +74,7 @@ void Home::startListen(){
     emit startThread();
     thread->start();
     connect(this,SIGNAL(sendMsg(QString,QString,QString,QString)),messageThread,SLOT(sendMsg(QString,QString,QString,QString)));
+    connect(this,SIGNAL(sendImg(QString,QString,QString,QString)),messageThread,SLOT(sendImg(QString,QString,QString,QString)));
 }
 void Home::updateList(QJsonObject list){
     qDebug()<<"COPY";
@@ -104,14 +120,27 @@ void Home::updateList(QJsonObject list){
 }
 
 void Home::newMsg(Message * msg){
-    if(msg->selfsend){
-        chat->page()->runJavaScript("addSelfTextMsg('"+msg->body.toHtmlEscaped()+"','"+msg->avatar+"')");
-    }else{
-        if(currentUser == msg->from){
-            qDebug()<<"new Msg";
-            chat->page()->runJavaScript("addTextMsg('"+msg->body.toHtmlEscaped()+"','"+usernameAvatar[msg->from]+"')");
+    if(msg->type=="img"){
+        if(msg->selfsend){
+            chat->page()->runJavaScript("addSelfImgMsg('"+msg->body.toHtmlEscaped()+"','"+msg->avatar+"')");
         }else{
+            if(currentUser == msg->from){
+                qDebug()<<"new Msg";
+                chat->page()->runJavaScript("addImgMsg('"+msg->body.toHtmlEscaped()+"','"+usernameAvatar[msg->from]+"')");
+            }else{
 
+            }
+        }
+    }else{
+        if(msg->selfsend){
+            chat->page()->runJavaScript("addSelfTextMsg('"+msg->body.toHtmlEscaped()+"','"+msg->avatar+"')");
+        }else{
+            if(currentUser == msg->from){
+                qDebug()<<"new Msg";
+                chat->page()->runJavaScript("addTextMsg('"+msg->body.toHtmlEscaped()+"','"+usernameAvatar[msg->from]+"')");
+            }else{
+
+            }
         }
     }
     QString session = msg->selfsend ? msg->to : msg->from;
@@ -151,4 +180,10 @@ void Home::on_pushButton_2_clicked()
     }else{
 
     }
+}
+
+void Home::on_pushButton_9_clicked()
+{
+    QString file_name = QFileDialog::getOpenFileName(this,"选择图片","图片","*.png *.jpg *.gif *.jpeg *.bmp");
+    emit sendImg(currentUser,file_name,userName,usernameAvatar[userName]);
 }

@@ -21,11 +21,13 @@ private:
     void socket_Disconnected();
     void Receive(QString data);
     void msgHandler(QJsonObject data);
+    void imgHandler(QJsonObject data);
 signals:
     void updateList(QJsonObject);
     void newMsg(Message*);
 public slots:
     void sendMsg(QString to,QString body,QString type,QString from);
+    void sendImg(QString to,QString,QString from,QString);
 public slots:
 };
 

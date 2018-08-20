@@ -38,14 +38,28 @@
 
         function addTextMsg(content,avatar) {
         	$(".empty").remove();
-            $(".active-chat").append("<div class=\"line animated fadeInLeft\"><div class=\"avatar\" style=\"float: left;\"><img src=\"../../avatar/"+avatar+".jpg\" class=\"avatar\"></div><div class=\"rowl\"><div class=\"bubble you bb\">"+content+"</div></div></div>");
+            $(".active-chat").append("<div class=\"line animated fadeInLeft fast\"><div class=\"avatar\" style=\"float: left;\"><img src=\"../../avatar/"+avatar+".jpg\" class=\"avatar\"></div><div class=\"rowl\"><div class=\"bubble you bb\">"+content+"</div></div></div>");
             var h = $(document).height();
             $(document).scrollTop(h);
         }
 
         function addSelfTextMsg(content,avatar) {
         	$(".empty").remove();
-			$(".active-chat").append("<div class=\"line animated fadeInRight\"><div class=\"avatar\" style=\"float: right;\"><img src=\"../../avatar/"+avatar+".jpg\" class=\"avatar\"></div><div class=\"row\"><div class=\"bubble me bb\">"+content+"</div></div></div>");
+			$(".active-chat").append("<div class=\"line animated fadeInRight fast\"><div class=\"avatar\" style=\"float: right;\"><img src=\"../../avatar/"+avatar+".jpg\" class=\"avatar\"></div><div class=\"row\"><div class=\"bubble me bb\">"+content+"</div></div></div>");
+            var h = $(document).height();
+            $(document).scrollTop(h);
+        }
+
+        function addImgMsg(content,avatar) {
+        	$(".empty").remove();
+            $(".active-chat").append("<div class=\"line animated fadeInLeft fast\"><div class=\"avatar\" style=\"float: left;\"><img src=\"../../avatar/"+avatar+".jpg\" class=\"avatar\"></div><div class=\"rowl\"><div class=\"bubble you bb\"><img src=\"data:image/jpg;base64,"+content+"\"></div></div></div>");
+            var h = $(document).height();
+            $(document).scrollTop(h);
+        }
+
+        function addSelfImgMsg(content,avatar) {
+        	$(".empty").remove();
+			$(".active-chat").append("<div class=\"line animated fadeInRight fast\"><div class=\"avatar\" style=\"float: right;\"><img src=\"../../avatar/"+avatar+".jpg\" class=\"avatar\"></div><div class=\"row\"><div class=\"bubble me bb\"><img src=\"data:image/jpg;base64,"+content+"\"></div></div></div>");
             var h = $(document).height();
             $(document).scrollTop(h);
         }
