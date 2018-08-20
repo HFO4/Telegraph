@@ -1,0 +1,18 @@
+<RCC>
+    <qresource prefix="/image">
+        <file>ban.png</file>
+        <file>ico</file>
+        <file>C:/Users/i/Downloads/文档类型-图片.png</file>
+        <file>C:/Users/i/Downloads/文件.png</file>
+        <file>C:/Users/i/Downloads/纸飞机.png</file>
+    </qresource>
+    <qresource prefix="/avatar">
+        <file>1.jpg</file>
+        <file>1b.jpg</file>
+    </qresource>
+    <qresource prefix="/html">
+        <file>chat/chat.css</file>
+        <file>chat/chat.html</file>
+        <file>chat/jquery.min.js</file>
+    </qresource>
+</RCC>
