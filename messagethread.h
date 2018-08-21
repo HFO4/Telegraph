@@ -22,9 +22,11 @@ private:
     void Receive(QString data);
     void msgHandler(QJsonObject data);
     void imgHandler(QJsonObject data);
+    void broadcastHandler(QJsonObject data);
 signals:
     void updateList(QJsonObject);
     void newMsg(Message*);
+    void updateStatus(int,QString);
 public slots:
     void sendMsg(QString to,QString body,QString type,QString from);
     void sendImg(QString to,QString,QString from,QString);

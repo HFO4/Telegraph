@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>986</width>
-    <height>481</height>
+    <width>892</width>
+    <height>518</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -151,6 +151,14 @@
     </widget>
    </item>
   </layout>
+  <action name="refresh">
+   <property name="text">
+    <string>刷新列表</string>
+   </property>
+   <property name="toolTip">
+    <string>刷新在线用户列表</string>
+   </property>
+  </action>
  </widget>
  <resources>
   <include location="res.qrc"/>

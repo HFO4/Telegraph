@@ -16,8 +16,10 @@ public:
     void setUserInfo(QString username,QString des,QString avatar);
     void addUnreadMessage();
     void readAll();
+    void setStatus(int);
     ~UserItem();
     QString userName;
+    QString avatarId;
 
 private:
     Ui::UserItem *ui;

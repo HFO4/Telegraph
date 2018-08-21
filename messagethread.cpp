@@ -62,12 +62,18 @@ void MessageThread::Receive(QString data){
                 }else if(value.toString()=="newImg"){
                     qDebug()<<"newImgMsg";
                     imgHandler(obj);
+                }else if(value.toString()=="broadcast"){
+                    broadcastHandler(obj);
                 }
             }
         }
     }else{
        qDebug()<<"无法解析请求"+data;
     }
+}
+
+void MessageThread::broadcastHandler(QJsonObject data){
+    emit updateStatus(data.value("status").toInt(),data.value("username").toString());
 }
 
 void MessageThread::msgHandler(QJsonObject data){

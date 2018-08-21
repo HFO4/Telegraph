@@ -32,6 +32,7 @@ public:
 public slots:
     void updateList(QJsonObject list);
     void newMsg(Message*);
+    void updateStatus(int,QString);
 
 private:
     Ui::Home *ui;

@@ -16,8 +16,8 @@ Home::Home(QWidget *parent) :
     ui(new Ui::Home)
 {
     ui->setupUi(this);
-    ui->splitter_2->setStretchFactor(0, 5);
-    ui->splitter_2->setStretchFactor(1, 5);
+    ui->splitter_2->setStretchFactor(0, 5.2);
+    ui->splitter_2->setStretchFactor(1, 4.8);
     ui->splitter->setStretchFactor(0, 8);
     ui->splitter->setStretchFactor(1, 2);
     chat = new QWebEngineView(this);
@@ -92,6 +92,7 @@ void Home::startListen(){
     thread->start();
     connect(this,SIGNAL(sendMsg(QString,QString,QString,QString)),messageThread,SLOT(sendMsg(QString,QString,QString,QString)));
     connect(this,SIGNAL(sendImg(QString,QString,QString,QString)),messageThread,SLOT(sendImg(QString,QString,QString,QString)));
+    connect(messageThread,SIGNAL(updateStatus(int,QString)),this,SLOT(updateStatus(int,QString)));
 }
 void Home::updateList(QJsonObject list){
     qDebug()<<"COPY";
@@ -144,6 +145,12 @@ void Home::updateList(QJsonObject list){
 
 void Home::insertTime(QTime msgTime){
     chat->page()->runJavaScript("insertTime('"+msgTime.toString("hh:mm")+"')");
+}
+
+void Home::updateStatus(int status,QString user){
+    if(usernameItem.contains(user)){
+        usernameItem[user]->setStatus(status);
+    }
 }
 
 void Home::newMsg(Message * msg){
