@@ -30,6 +30,7 @@ void::Home::changeSelected(){
     UserItem* currentItem = (UserItem*)ui->listWidget->itemWidget(ui->listWidget->currentItem());
     currentUser = currentItem->userName;
     chat->page()->runJavaScript("Clear()");
+    currentItem->readAll();
     if(!messageList.contains(currentUser)){
         chat->page()->runJavaScript("Empty()");
     }else{
@@ -38,21 +39,37 @@ void::Home::changeSelected(){
             Message msg = i.next();
             if(msg.type=="img"){
                 if(msg.selfsend){
+                    if(userTime[msg.to].toString("mm")!=msg.time.toString("mm")){
+                        userTime[msg.to] = msg.time;
+                        insertTime(msg.time);
+                    }
                     chat->page()->runJavaScript("addSelfImgMsg('"+msg.body.toHtmlEscaped()+"','"+msg.avatar+"')");
                 }else{
                     if(currentUser == msg.from){
                         qDebug()<<"new Msg";
                         chat->page()->runJavaScript("addImgMsg('"+msg.body.toHtmlEscaped()+"','"+usernameAvatar[msg.from]+"')");
+                        if(userTime[msg.from].toString("mm")!=msg.time.toString("mm")){
+                            userTime[msg.from] = msg.time;
+                            insertTime(msg.time);
+                        }
                     }else{
 
                     }
                 }
             }else{
                 if(msg.selfsend){
+                    if(userTime[msg.to].toString("mm")!=msg.time.toString("mm")){
+                        userTime[msg.to] = msg.time;
+                        insertTime(msg.time);
+                    }
                     chat->page()->runJavaScript("addSelfTextMsg('"+msg.body.toHtmlEscaped()+"','"+msg.avatar+"')");
                 }else{
                     if(currentUser == msg.from){
                         chat->page()->runJavaScript("addTextMsg('"+msg.body.toHtmlEscaped()+"','"+usernameAvatar[msg.from]+"')");
+                        if(userTime[msg.from].toString("mm")!=msg.time.toString("mm")){
+                            userTime[msg.from] = msg.time;
+                            insertTime(msg.time);
+                        }
                     }else{
 
                     }
@@ -80,6 +97,8 @@ void Home::updateList(QJsonObject list){
     qDebug()<<"COPY";
     QList<int> added;
     usernameAvatar.clear();
+    usernameItem.clear();
+    userTime.clear();
     if(list.contains("online")){
         QJsonValue value = list.value("online");
         QJsonArray onlineList = value.toArray();
@@ -93,8 +112,10 @@ void Home::updateList(QJsonObject list){
             ui->listWidget->addItem(listItem);
             user->setUserInfo(singleUser.value("username").toString(),"在线",QString::number(singleUser.value("avatar").toInt(), 10));
             ui->listWidget->setItemWidget(listItem,user);
+            usernameItem[singleUser.value("username").toString()]=user;
             added.append(singleUser.value("uid").toInt());
             usernameAvatar[singleUser.value("username").toString()]=QString::number(singleUser.value("avatar").toInt(), 10);
+            userTime.insert(singleUser.value("username").toString(),QTime(0,0));
             //qDebug()<<singleUser.value("username").toString();
         }
     }
@@ -113,33 +134,55 @@ void Home::updateList(QJsonObject list){
                 ui->listWidget->addItem(listItem);
                 user->setUserInfo(singleUserOff.value("username").toString(),"离线",QString::number(singleUserOff.value("avatar").toInt(), 10)+"b");
                 ui->listWidget->setItemWidget(listItem,user);
+                usernameItem[singleUserOff.value("username").toString()]=user;
                 usernameAvatar[singleUserOff.value("username").toString()]=QString::number(singleUserOff.value("avatar").toInt(), 10)+"b";
+                userTime.insert(singleUserOff.value("username").toString(),QTime(0,0));
             }
         }
     }
 }
 
+void Home::insertTime(QTime msgTime){
+    chat->page()->runJavaScript("insertTime('"+msgTime.toString("hh:mm")+"')");
+}
+
 void Home::newMsg(Message * msg){
     if(msg->type=="img"){
         if(msg->selfsend){
-            chat->page()->runJavaScript("addSelfImgMsg('"+msg->body.toHtmlEscaped()+"','"+msg->avatar+"')");
+            if(userTime[msg->to].toString("mm")!=msg->time.toString("mm")){
+                userTime[msg->to] = msg->time;
+                insertTime(msg->time);
+            }
+            chat->page()->runJavaScript("addSelfImgMsg('"+msg->body.toHtmlEscaped()+"','"+msg->avatar+"')"); 
         }else{
             if(currentUser == msg->from){
                 qDebug()<<"new Msg";
                 chat->page()->runJavaScript("addImgMsg('"+msg->body.toHtmlEscaped()+"','"+usernameAvatar[msg->from]+"')");
+                if(userTime[msg->from].toString("mm")!=msg->time.toString("mm")){
+                    userTime[msg->from] = msg->time;
+                    insertTime(msg->time);
+                }
             }else{
-
+                usernameItem[msg->from]->addUnreadMessage();
             }
         }
     }else{
         if(msg->selfsend){
+            if(userTime[msg->to].toString("mm")!=msg->time.toString("mm")){
+                userTime[msg->to] = msg->time;
+                insertTime(msg->time);
+            }
             chat->page()->runJavaScript("addSelfTextMsg('"+msg->body.toHtmlEscaped()+"','"+msg->avatar+"')");
         }else{
             if(currentUser == msg->from){
                 qDebug()<<"new Msg";
                 chat->page()->runJavaScript("addTextMsg('"+msg->body.toHtmlEscaped()+"','"+usernameAvatar[msg->from]+"')");
+                if(userTime[msg->from].toString("mm")!=msg->time.toString("mm")){
+                    insertTime(msg->time);
+                    userTime[msg->from] = msg->time;
+                }
             }else{
-
+                usernameItem[msg->from]->addUnreadMessage();
             }
         }
     }
@@ -162,6 +205,7 @@ void Home::on_pushButton_clicked()
 {
     QString msgBody = ui->textEdit_2->toPlainText();
     Message *msg = new Message("text",msgBody,userName,currentUser,1);
+    msg->setTime(QTime::currentTime().toString("hh:mm"));
     msg->avatar = usernameAvatar[userName];
     newMsg(msg);
     emit sendMsg(currentUser,msgBody,"text",userName);
@@ -186,4 +230,11 @@ void Home::on_pushButton_9_clicked()
 {
     QString file_name = QFileDialog::getOpenFileName(this,"选择图片","图片","*.png *.jpg *.gif *.jpeg *.bmp");
     emit sendImg(currentUser,file_name,userName,usernameAvatar[userName]);
+}
+
+void Home::on_pushButton_3_clicked()
+{
+    chat->page()->runJavaScript("Empty()");
+    messageList[currentUser].clear();
+    userTime[currentUser] = QTime(0,0);
 }

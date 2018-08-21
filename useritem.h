@@ -14,11 +14,14 @@ class UserItem : public QWidget
 public:
     explicit UserItem(QWidget *parent = 0);
     void setUserInfo(QString username,QString des,QString avatar);
+    void addUnreadMessage();
+    void readAll();
     ~UserItem();
     QString userName;
 
 private:
     Ui::UserItem *ui;
+    int unread=0;
 };
 
 #endif // USERITEM_H

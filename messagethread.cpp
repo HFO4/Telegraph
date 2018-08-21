@@ -72,10 +72,12 @@ void MessageThread::Receive(QString data){
 
 void MessageThread::msgHandler(QJsonObject data){
     Message* msg = new Message("text",data.value("body").toString(),data.value("from").toString(),userName,0);
+    msg->setTime(data.value("time").toString());
     emit newMsg(msg);
 }
 void MessageThread::imgHandler(QJsonObject data){
     Message* msg = new Message("img",data.value("body").toString(),data.value("from").toString(),userName,0);
+    msg->setTime(data.value("time").toString());
     emit newMsg(msg);
 }
 
@@ -104,6 +106,7 @@ void MessageThread::sendImg(QString to,QString path,QString from,QString selfAva
     QByteArray hexed = ba.toBase64();
     buf.close();
     Message *msg = new Message("img",QString(hexed),from,to,1);
+    msg->setTime(QTime::currentTime().toString("hh:mm"));
     msg->avatar = selfAvatar;
     emit newMsg(msg);
     QJsonObject newMessage;

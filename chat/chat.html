@@ -18,9 +18,7 @@
 
 
                 <div class="chat active-chat" data-chat="person2">
-                    <div class="conversation-start">
-                        <span>Today, 5:38 PM</span>
-                    </div>
+                  
                 </div>
             </div>
 
@@ -70,6 +68,10 @@
 
         function Empty(){
         	$(".active-chat").html("<div class=\"empty\">消息为空</div>");
+        }
+
+        function insertTime(time){
+        	$(".active-chat").append("<div class=\"conversation-start\"><span>"+time+"</span></div>");
         }
     </script>
 

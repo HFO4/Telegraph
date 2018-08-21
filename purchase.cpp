@@ -4,6 +4,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QBuffer>
+
 #pragma execution_character_set("utf-8")
 
 Purchase::Purchase(QWidget *parent) :
@@ -19,6 +20,7 @@ Purchase::Purchase(QWidget *parent) :
 Purchase::~Purchase()
 {
     delete ui;
+    delete timer;
 }
 void Purchase::init(int num, QString username){
     ui->lineEdit->setText(QString::number(num));
@@ -61,16 +63,23 @@ void Purchase::firstFinished(QNetworkReply *reply){
                         QJsonObject object = doucment.object();
                         if (object.contains("response")) {
                             QString code = object.value("response").toObject().value("qr_code").toString();
-                            QString id = object.value("response").toObject().value("qr_id").toString();
+                            qrId = object.value("response").toObject().value("qr_id").toString();
                             first=0;
                             Base64_To_Image(code.replace("data:image/png;base64,","").toUtf8(),"qr.png");
                             qDebug()<<code;
                             ui->label_5->setPixmap(QPixmap("qr.png"));
+                            timer = new QTimer(this);
+                            connect(timer, SIGNAL(timeout()), this, SLOT(queryStatus()));
+                            timer->start(1000); // 每隔1s
                          }
                     }
                 }
          }
     }
+}
+
+void Purchase::queryStatus(){
+    qDebug()<<"ss";
 }
 
 void Purchase::dropOrder(){

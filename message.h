@@ -2,6 +2,7 @@
 #define MESSAGE_H
 
 #include <QString>
+#include <QTime>
 
 class Message
 {
@@ -17,8 +18,11 @@ public:
     QString avatar;
     QString body;
     QString from;
+    QString timeString;
     QString to;
+    QTime time;
     bool selfsend;
+    void setTime(QString);
 };
 
 #endif // MESSAGE_H
