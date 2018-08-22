@@ -6,6 +6,7 @@
 #include "dialog.h"
 #include "purchase.h"
 #include "useritem.h"
+#include "creatgroup.h"
 #include "filecontext.h"
 
 #include <QWidget>
@@ -36,6 +37,7 @@ public slots:
     void updateStatus(int,QString);
     void sendNewFile(QString,qint64,QString);
     void setProgress(QString,qint64,qint64);
+    void newJoinedGroup(QString);
 
 private:
     Ui::Home *ui;
@@ -57,12 +59,14 @@ signals:
     void sendMsg(QString,QString,QString,QString);
     void sendImg(QString,QString,QString,QString);
     void sendFile(QString,QString,QString,QString);
+    void creatGroup(QString,QString,QList<QString>);
 private slots:
     void on_pushButton_clicked();
     void on_pushButton_2_clicked();
     void on_pushButton_9_clicked();
     void on_pushButton_3_clicked();
     void on_pushButton_10_clicked();
+    void on_pushButton_4_clicked();
 };
 
 #endif // HOME_H

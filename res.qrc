@@ -7,10 +7,13 @@
         <file>C:/Users/i/Downloads/纸飞机.png</file>
         <file>C:/Users/i/Downloads/ic_cleaning_junk.png</file>
         <file>file-b-17.png</file>
+        <file>add.png</file>
+        <file>cash.png</file>
     </qresource>
     <qresource prefix="/avatar">
         <file>1.jpg</file>
         <file>1b.jpg</file>
+        <file>group.jpg</file>
     </qresource>
     <qresource prefix="/html">
         <file>chat/chat.css</file>

@@ -18,6 +18,7 @@ public:
     QString avatar;
     QString body;
     QString from;
+    QString avatarName;
     QString timeString;
     QString to;
     qint64 sended;

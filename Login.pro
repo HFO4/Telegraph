@@ -34,7 +34,8 @@ SOURCES += \
     message.cpp \
     dialog.cpp \
     purchase.cpp \
-    filecontext.cpp
+    filecontext.cpp \
+    creatgroup.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -46,7 +47,8 @@ HEADERS += \
     message.h \
     dialog.h \
     purchase.h \
-    filecontext.h
+    filecontext.h \
+    creatgroup.h
 
 FORMS += \
         mainwindow.ui \
@@ -54,7 +56,8 @@ FORMS += \
     home.ui \
     useritem.ui \
     dialog.ui \
-    purchase.ui
+    purchase.ui \
+    creatgroup.ui
 
 RESOURCES += \
     res.qrc

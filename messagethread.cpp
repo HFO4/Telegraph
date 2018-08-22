@@ -5,6 +5,7 @@
 #include <QJsonParseError>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QJsonArray>
 #include <QBuffer>
 #include <QImage>
 #include <QFileInfo>
@@ -72,6 +73,8 @@ void MessageThread::Receive(QString data){
                     broadcastHandler(obj);
                 }else if(value.toString()=="newFile"){
                     fileHandler(obj);
+                }else if(value.toString()=="newGroup"){
+                    newGroupHandler(obj);
                 }
             }
         }
@@ -80,10 +83,15 @@ void MessageThread::Receive(QString data){
     }
 }
 
+void MessageThread::newGroupHandler(QJsonObject data){
+    emit newJoinedGroup(data.value("groupname").toString());
+}
+
 void MessageThread::fileHandler(QJsonObject data){
     Message* msg = new Message("file",data.value("realname").toString(),data.value("from").toString(),userName,0);
     msg->total = data.value("size").toInt();
     msg->fileName = data.value("filename").toString();
+    msg->avatarName = data.value("avatarname").toString();
     msg->setTime(data.value("time").toString());
     emit newMsg(msg);
 }
@@ -94,11 +102,13 @@ void MessageThread::broadcastHandler(QJsonObject data){
 
 void MessageThread::msgHandler(QJsonObject data){
     Message* msg = new Message("text",data.value("body").toString(),data.value("from").toString(),userName,0);
+    msg->avatarName = data.value("avatarname").toString();
     msg->setTime(data.value("time").toString());
     emit newMsg(msg);
 }
 void MessageThread::imgHandler(QJsonObject data){
     Message* msg = new Message("img",data.value("body").toString(),data.value("from").toString(),userName,0);
+    msg->avatarName = data.value("avatarname").toString();
     msg->setTime(data.value("time").toString());
     emit newMsg(msg);
 }
@@ -225,6 +235,27 @@ void MessageThread::sendFile(QString to,QString path,QString from,QString selfAv
 
     //emit fileSended();
 
+}
+
+void MessageThread::createGroup(QString groupname, QString currentUser, QList<QString> users){
+    QJsonObject newMessage;
+    QJsonObject msgData;
+    QJsonArray userList;
+    newMessage.insert("action","createGroup");
+    msgData.insert("groupname",groupname);
+    userList.append(currentUser);
+    QListIterator<QString> i(users);
+    while (i.hasNext()) {
+        userList.append(i.next());
+    }
+    msgData.insert("user",userList);
+    newMessage.insert("data",msgData);
+    QJsonDocument document;
+    document.setObject(newMessage);
+    QByteArray byteArray = document.toJson(QJsonDocument::Compact);
+    QString strJson(byteArray);
+    socket->sendTextMessage(strJson.toUtf8());
+    socket->flush();
 }
 
 void MessageThread::socket_Disconnected(){

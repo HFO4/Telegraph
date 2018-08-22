@@ -30,16 +30,19 @@ private:
     void imgHandler(QJsonObject data);
     void fileHandler(QJsonObject data);
     void broadcastHandler(QJsonObject data);
+    void newGroupHandler(QJsonObject data);
 signals:
     void updateList(QJsonObject);
     void newMsg(Message*);
     void updateStatus(int,QString);
     void newSendFile(QString,qint64,QString);
     void setProgress(QString,qint64,qint64);
+    void newJoinedGroup(QString);
 public slots:
     void sendMsg(QString to,QString body,QString type,QString from);
     void sendImg(QString to,QString,QString from,QString);
     void sendFile(QString to,QString,QString from,QString);
+    void createGroup(QString,QString,QList<QString>);
     void Download(QString,QString,qint64);
 public slots:
 };
