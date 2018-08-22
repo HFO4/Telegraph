@@ -6,6 +6,7 @@
         <file>C:/Users/i/Downloads/文件.png</file>
         <file>C:/Users/i/Downloads/纸飞机.png</file>
         <file>C:/Users/i/Downloads/ic_cleaning_junk.png</file>
+        <file>file-b-17.png</file>
     </qresource>
     <qresource prefix="/avatar">
         <file>1.jpg</file>
@@ -16,5 +17,6 @@
         <file>chat/chat.html</file>
         <file>chat/jquery.min.js</file>
         <file>chat/animate.css</file>
+        <file>qwebchannel.js</file>
     </qresource>
 </RCC>

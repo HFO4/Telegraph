@@ -6,6 +6,7 @@
 #include "dialog.h"
 #include "purchase.h"
 #include "useritem.h"
+#include "filecontext.h"
 
 #include <QWidget>
 #include <QThread>
@@ -33,12 +34,15 @@ public slots:
     void updateList(QJsonObject list);
     void newMsg(Message*);
     void updateStatus(int,QString);
+    void sendNewFile(QString,qint64,QString);
+    void setProgress(QString,qint64,qint64);
 
 private:
     Ui::Home *ui;
     QThread* thread;
     MessageThread* messageThread;
     Purchase* purchase;
+    FileContext* webContext;
     QString currentUser;
     void changeSelected();
     void insertTime(QTime);
@@ -52,11 +56,13 @@ signals:
     void startThread();
     void sendMsg(QString,QString,QString,QString);
     void sendImg(QString,QString,QString,QString);
+    void sendFile(QString,QString,QString,QString);
 private slots:
     void on_pushButton_clicked();
     void on_pushButton_2_clicked();
     void on_pushButton_9_clicked();
     void on_pushButton_3_clicked();
+    void on_pushButton_10_clicked();
 };
 
 #endif // HOME_H

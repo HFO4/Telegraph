@@ -20,6 +20,9 @@ public:
     QString from;
     QString timeString;
     QString to;
+    qint64 sended;
+    qint64 total;
+    QString fileName;
     QTime time;
     bool selfsend;
     void setTime(QString);

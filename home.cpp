@@ -8,6 +8,7 @@
 #include <QJsonArray>
 #include <QListWidgetItem>
 #include <QList>
+#include <QWebChannel>
 #include <QFileDialog>
 
 #pragma execution_character_set("utf-8")
@@ -23,6 +24,10 @@ Home::Home(QWidget *parent) :
     chat = new QWebEngineView(this);
     chat->load(QUrl("qrc:/html/chat/chat.html"));
     chat->setContextMenuPolicy(Qt::NoContextMenu);
+    QWebChannel* webchannel = new QWebChannel(chat);
+    chat->page()->setWebChannel(webchannel);
+    webContext = new FileContext;
+    webchannel->registerObject(QStringLiteral("content"), (QObject*)webContext);
     ui->verticalLayout_2->addWidget(chat);
     connect(ui->listWidget,&QListWidget::itemSelectionChanged,this,&Home::changeSelected);
 }
@@ -52,6 +57,25 @@ void::Home::changeSelected(){
                             userTime[msg.from] = msg.time;
                             insertTime(msg.time);
                         }
+                    }else{
+
+                    }
+                }
+            }else if(msg.type=="file"){
+                if(msg.selfsend){
+                    if(userTime[msg.to].toString("mm")!=msg.time.toString("mm")){
+                        userTime[msg.to] = msg.time;
+                        insertTime(msg.time);
+                    }
+                    chat->page()->runJavaScript("newSendFile('"+msg.fileName+"',"+QString::number(msg.total)+",'"+msg.body+"','"+msg.avatar+"')");
+                    setProgress(msg.body,100,100);
+                }else{
+                    if(currentUser == msg.from){
+                        if(userTime[msg.to].toString("mm")!=msg.time.toString("mm")){
+                            userTime[msg.to] = msg.time;
+                            insertTime(msg.time);
+                        }
+                        chat->page()->runJavaScript("newReceiveFile('"+msg.fileName+"',"+QString::number(msg.total)+",'"+msg.body+"','"+usernameAvatar[msg.from]+"')");
                     }else{
 
                     }
@@ -92,8 +116,14 @@ void Home::startListen(){
     thread->start();
     connect(this,SIGNAL(sendMsg(QString,QString,QString,QString)),messageThread,SLOT(sendMsg(QString,QString,QString,QString)));
     connect(this,SIGNAL(sendImg(QString,QString,QString,QString)),messageThread,SLOT(sendImg(QString,QString,QString,QString)));
+    connect(this,SIGNAL(sendFile(QString,QString,QString,QString)),messageThread,SLOT(sendFile(QString,QString,QString,QString)));
+    connect(messageThread,SIGNAL(newSendFile(QString,qint64,QString)),this,SLOT(sendNewFile(QString,qint64,QString)));
+    connect(messageThread,SIGNAL(setProgress(QString,qint64,qint64)),this,SLOT(setProgress(QString,qint64,qint64)));
     connect(messageThread,SIGNAL(updateStatus(int,QString)),this,SLOT(updateStatus(int,QString)));
+    connect(webContext,SIGNAL(doDownload(QString,QString,qint64)),messageThread,SLOT(Download(QString,QString,qint64)));
 }
+
+
 void Home::updateList(QJsonObject list){
     qDebug()<<"COPY";
     QList<int> added;
@@ -147,9 +177,16 @@ void Home::insertTime(QTime msgTime){
     chat->page()->runJavaScript("insertTime('"+msgTime.toString("hh:mm")+"')");
 }
 
+
+
 void Home::updateStatus(int status,QString user){
     if(usernameItem.contains(user)){
         usernameItem[user]->setStatus(status);
+    }
+    if(status == 1){
+        usernameAvatar[user]= usernameAvatar[user].replace("b","");
+    }else{
+        usernameAvatar[user]= usernameAvatar[user].replace("b","")+"b";
     }
 }
 
@@ -169,6 +206,24 @@ void Home::newMsg(Message * msg){
                     userTime[msg->from] = msg->time;
                     insertTime(msg->time);
                 }
+            }else{
+                usernameItem[msg->from]->addUnreadMessage();
+            }
+        }
+    }else if(msg->type=="file"){
+        if(msg->selfsend){
+            if(userTime[msg->to].toString("mm")!=msg->time.toString("mm")){
+                userTime[msg->to] = msg->time;
+                insertTime(msg->time);
+            }
+            chat->page()->runJavaScript("newSendFile('"+msg->fileName+"',"+QString::number(msg->total)+",'"+msg->body+"','"+msg->avatar+"')");
+        }else{
+            if(currentUser == msg->from){
+                if(userTime[msg->from].toString("mm")!=msg->time.toString("mm")){
+                    insertTime(msg->time);
+                    userTime[msg->from] = msg->time;
+                }
+                chat->page()->runJavaScript("newReceiveFile('"+msg->fileName+"',"+QString::number(msg->total)+",'"+msg->body+"','"+usernameAvatar[msg->from]+"')");
             }else{
                 usernameItem[msg->from]->addUnreadMessage();
             }
@@ -199,6 +254,19 @@ void Home::newMsg(Message * msg){
 
 }
 
+void Home::sendNewFile(QString filename, qint64 fsize, QString id){
+    Message *msg = new Message("file",id,userName,currentUser,1);
+    msg->fileName = filename;
+    msg->total = fsize;
+    msg->setTime(QTime::currentTime().toString("hh:mm"));
+    msg->avatar = usernameAvatar[userName];
+    newMsg(msg);
+}
+
+void Home::setProgress(QString id, qint64 sended, qint64 total){
+    chat->page()->runJavaScript("setProgress('"+id+"',"+QString::number(sended)+",'"+QString::number(total)+"')");
+}
+
 Home::~Home()
 {
     delete ui;
@@ -206,6 +274,7 @@ Home::~Home()
     thread->wait();
     delete thread;
     delete messageThread;
+    delete webContext;
 }
 
 void Home::on_pushButton_clicked()
@@ -216,6 +285,7 @@ void Home::on_pushButton_clicked()
     msg->avatar = usernameAvatar[userName];
     newMsg(msg);
     emit sendMsg(currentUser,msgBody,"text",userName);
+    ui->textEdit_2->setPlainText("");
 }
 
 void Home::on_pushButton_2_clicked()
@@ -236,7 +306,9 @@ void Home::on_pushButton_2_clicked()
 void Home::on_pushButton_9_clicked()
 {
     QString file_name = QFileDialog::getOpenFileName(this,"选择图片","图片","*.png *.jpg *.gif *.jpeg *.bmp");
-    emit sendImg(currentUser,file_name,userName,usernameAvatar[userName]);
+    if(!file_name.isNull()){
+        emit sendImg(currentUser,file_name,userName,usernameAvatar[userName]);
+    }
 }
 
 void Home::on_pushButton_3_clicked()
@@ -244,4 +316,12 @@ void Home::on_pushButton_3_clicked()
     chat->page()->runJavaScript("Empty()");
     messageList[currentUser].clear();
     userTime[currentUser] = QTime(0,0);
+}
+
+void Home::on_pushButton_10_clicked()
+{
+    QString file_name = QFileDialog::getOpenFileName(this,"选择文件","文档","*.*");
+    if(!file_name.isNull()){
+        emit sendFile(currentUser,file_name,userName,usernameAvatar[userName]);
+    }
 }

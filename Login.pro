@@ -33,7 +33,8 @@ SOURCES += \
     useritem.cpp \
     message.cpp \
     dialog.cpp \
-    purchase.cpp
+    purchase.cpp \
+    filecontext.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -44,7 +45,8 @@ HEADERS += \
     useritem.h \
     message.h \
     dialog.h \
-    purchase.h
+    purchase.h \
+    filecontext.h
 
 FORMS += \
         mainwindow.ui \
