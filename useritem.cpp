@@ -13,7 +13,7 @@ void UserItem::setUserInfo(QString username, QString des, QString avatar){
     userName = username;
     ui->label_3->setText(des);
     avatarId = avatar;
-    ui->label->setStyleSheet("border-image: url(:/avatar/"+avatar+".jpg);border-radius:32;");
+    ui->label->setStyleSheet("border-image: url(:/avatar/avatars/"+avatar+".jpg);border-radius:32;");
 }
 void UserItem::addUnreadMessage(){
     ui->label_4->show();
@@ -24,10 +24,10 @@ void UserItem::addUnreadMessage(){
 
 void UserItem::setStatus(int status){
     if(status==1){
-         ui->label->setStyleSheet("border-image: url(:/avatar/"+avatarId.replace("b","")+".jpg);border-radius:32;");
+         ui->label->setStyleSheet("border-image: url(:/avatar/avatars/"+avatarId.replace("b","")+".jpg);border-radius:32;");
          ui->label_3->setText("在线");
     }else{
-        ui->label->setStyleSheet("border-image: url(:/avatar/"+avatarId.replace("b","")+"b.jpg);border-radius:32;");
+        ui->label->setStyleSheet("border-image: url(:/avatar/avatars/"+avatarId.replace("b","")+"b.jpg);border-radius:32;");
         ui->label_3->setText("离线");
     }
 }

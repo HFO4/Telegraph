@@ -11,9 +11,19 @@
         <file>cash.png</file>
     </qresource>
     <qresource prefix="/avatar">
-        <file>1.jpg</file>
-        <file>1b.jpg</file>
-        <file>group.jpg</file>
+        <file>avatars/1.jpg</file>
+        <file>avatars/1b.jpg</file>
+        <file>avatars/group.jpg</file>
+        <file>avatars/2.jpg</file>
+        <file>avatars/2b.jpg</file>
+        <file>avatars/3.jpg</file>
+        <file>avatars/3b.jpg</file>
+        <file>avatars/4.jpg</file>
+        <file>avatars/4b.jpg</file>
+        <file>avatars/5.jpg</file>
+        <file>avatars/5b.jpg</file>
+        <file>avatars/6.jpg</file>
+        <file>avatars/6b.jpg</file>
     </qresource>
     <qresource prefix="/html">
         <file>chat/chat.css</file>
