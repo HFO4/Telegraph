@@ -3,6 +3,7 @@
 #include <QDesktopServices>
 #include <QUrl>
 #include <QFileInfo>
+#include <QMessageBox>
 FileContext::FileContext()
 {
 
@@ -14,4 +15,9 @@ void FileContext::Download(QString realname,QString filename ,qint64 size){
 
 void FileContext::Open(QString name){
     QDesktopServices::openUrl(QUrl::fromLocalFile(QFileInfo("tmp/"+name).absoluteFilePath()));
+}
+
+void FileContext::withDraw(QString mid){
+    emit withDrawMsg(mid);
+
 }

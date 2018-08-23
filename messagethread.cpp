@@ -75,10 +75,13 @@ void MessageThread::Receive(QString data){
                     fileHandler(obj);
                 }else if(value.toString()=="newGroup"){
                     newGroupHandler(obj);
+                }else if(value.toString()=="withDraw"){
+                    emit backMsg(obj.value("mid").toString(),obj.value("from").toString());
                 }
             }
         }
     }else{
+
        qDebug()<<"无法解析请求"+data;
     }
 }
@@ -91,6 +94,7 @@ void MessageThread::fileHandler(QJsonObject data){
     Message* msg = new Message("file",data.value("realname").toString(),data.value("from").toString(),userName,0);
     msg->total = data.value("size").toInt();
     msg->fileName = data.value("filename").toString();
+    msg->mid = data.value("mid").toString();
     msg->avatarName = data.value("avatarname").toString();
     msg->setTime(data.value("time").toString());
     emit newMsg(msg);
@@ -104,11 +108,13 @@ void MessageThread::msgHandler(QJsonObject data){
     Message* msg = new Message("text",data.value("body").toString(),data.value("from").toString(),userName,0);
     msg->avatarName = data.value("avatarname").toString();
     msg->setTime(data.value("time").toString());
+    msg->mid=data.value("mid").toString();
     emit newMsg(msg);
 }
 void MessageThread::imgHandler(QJsonObject data){
     Message* msg = new Message("img",data.value("body").toString(),data.value("from").toString(),userName,0);
     msg->avatarName = data.value("avatarname").toString();
+    msg->mid = data.value("mid").toString();
     msg->setTime(data.value("time").toString());
     emit newMsg(msg);
 }
@@ -138,19 +144,23 @@ void MessageThread::ReceiveData(QByteArray data){
         file->close();
         delete file;
     }else{
+        if(!file->isOpen()){
+            file->open(QIODevice::WriteOnly);
+        }
         file->write(data);
         emit setProgress(realName,file->size(),totalSize);
     }
 
 }
 
-void MessageThread::sendMsg(QString to, QString body, QString type, QString from){
+void MessageThread::sendMsg(QString to, QString body, QString type, QString from,QString mid){
     QJsonObject newMessage;
     QJsonObject msgData;
     newMessage.insert("action","sendTextMsg");
     msgData.insert("to",to);
     msgData.insert("from",from);
     msgData.insert("body",body);
+    msgData.insert("mid",mid);
     newMessage.insert("data",msgData);
     QJsonDocument document;
     document.setObject(newMessage);
@@ -158,6 +168,20 @@ void MessageThread::sendMsg(QString to, QString body, QString type, QString from
     QString strJson(byteArray);
     socket->sendTextMessage(strJson.toUtf8());
     socket->flush();
+}
+
+QString MessageThread::randomString(){
+        int max = 8;
+        QString tmp = QString("0123456789ABCDEFGHIJKLMNOPQRSTUVWZYZ");
+        QString str = QString();
+        QTime t;
+        t= QTime::currentTime();
+        qsrand(t.msec()+t.second()*1000);
+        for(int i=0;i<max;i++) {
+            int ir = qrand()%tmp.length();
+            str[i] = tmp.at(ir);
+        }
+        return str;
 }
 
 void MessageThread::sendImg(QString to,QString path,QString from,QString selfAvatar){
@@ -170,6 +194,7 @@ void MessageThread::sendImg(QString to,QString path,QString from,QString selfAva
     buf.close();
     Message *msg = new Message("img",QString(hexed),from,to,1);
     msg->setTime(QTime::currentTime().toString("hh:mm"));
+    msg->mid =randomString();
     msg->avatar = selfAvatar;
     emit newMsg(msg);
     QJsonObject newMessage;
@@ -177,6 +202,7 @@ void MessageThread::sendImg(QString to,QString path,QString from,QString selfAva
     newMessage.insert("action","sendImg");
     msgData.insert("to",to);
     msgData.insert("from",from);
+    msgData.insert("mid",msg->mid);
     msgData.insert("body",QString(hexed));
     newMessage.insert("data",msgData);
     QJsonDocument document;
@@ -196,6 +222,8 @@ void MessageThread::sendFile(QString to,QString path,QString from,QString selfAv
     newMessage.insert("action","sendFile");
     msgData.insert("to",to);
     msgData.insert("from",from);
+    QString mid = randomString();
+    msgData.insert("mid",mid);
     msgData.insert("filename",fileinfo.fileName());
     msgData.insert("size",fileinfo.size());
     newMessage.insert("data",msgData);
@@ -206,7 +234,7 @@ void MessageThread::sendFile(QString to,QString path,QString from,QString selfAv
     socket->sendTextMessage(strJson.toUtf8());
     socket->flush();
     QString fileId = QString::number(QDateTime::currentDateTime().toTime_t());
-    emit newSendFile(fileinfo.fileName(),fileinfo.size(),fileId);
+    emit newSendFile(fileinfo.fileName(),fileinfo.size(),fileId,mid);
     QByteArray outBlock;
     QFile fileObj(path);
     fileObj.open(QFile::ReadOnly);
@@ -238,6 +266,7 @@ void MessageThread::sendFile(QString to,QString path,QString from,QString selfAv
 }
 
 void MessageThread::createGroup(QString groupname, QString currentUser, QList<QString> users){
+    qDebug()<<"newGroup2";
     QJsonObject newMessage;
     QJsonObject msgData;
     QJsonArray userList;
@@ -245,10 +274,33 @@ void MessageThread::createGroup(QString groupname, QString currentUser, QList<QS
     msgData.insert("groupname",groupname);
     userList.append(currentUser);
     QListIterator<QString> i(users);
+    qDebug()<<"newGroup4";
     while (i.hasNext()) {
         userList.append(i.next());
     }
+    qDebug()<<"newGroup5";
     msgData.insert("user",userList);
+    newMessage.insert("data",msgData);
+    QJsonDocument document;
+    document.setObject(newMessage);
+    QByteArray byteArray = document.toJson(QJsonDocument::Compact);
+    QString strJson(byteArray);
+    socket->sendTextMessage(strJson.toUtf8());
+    socket->flush();
+    qDebug()<<"newGroup3";
+}
+
+void MessageThread::socket_Disconnected(){
+    emit offLine();
+}
+
+void MessageThread::changeProfile(QString um, QString pwd){
+    QJsonObject newMessage;
+    QJsonObject msgData;
+    newMessage.insert("action","changeProfile");
+    msgData.insert("origin",userName);
+    msgData.insert("new",um);
+    msgData.insert("pwd",pwd);
     newMessage.insert("data",msgData);
     QJsonDocument document;
     document.setObject(newMessage);
@@ -258,6 +310,20 @@ void MessageThread::createGroup(QString groupname, QString currentUser, QList<QS
     socket->flush();
 }
 
-void MessageThread::socket_Disconnected(){
+void MessageThread::withDraw(QString mid){
+    QJsonObject newMessage;
+    QJsonObject msgData;
+    newMessage.insert("action","withDraw");
+    msgData.insert("mid",mid);
+    msgData.insert("from",userName);
+    msgData.insert("to",currentUm);
+    newMessage.insert("data",msgData);
+    QJsonDocument document;
+    document.setObject(newMessage);
+    QByteArray byteArray = document.toJson(QJsonDocument::Compact);
+    QString strJson(byteArray);
+    socket->sendTextMessage(strJson.toUtf8());
+    socket->flush();
 
+    emit backMsg(mid,"current");
 }

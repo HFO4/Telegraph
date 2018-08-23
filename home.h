@@ -8,6 +8,7 @@
 #include "useritem.h"
 #include "creatgroup.h"
 #include "filecontext.h"
+#include "dialog/editprofile.h"
 
 #include <QWidget>
 #include <QThread>
@@ -35,9 +36,11 @@ public slots:
     void updateList(QJsonObject list);
     void newMsg(Message*);
     void updateStatus(int,QString);
-    void sendNewFile(QString,qint64,QString);
+    void sendNewFile(QString,qint64,QString,QString);
     void setProgress(QString,qint64,qint64);
     void newJoinedGroup(QString);
+    void backMsg(QString,QString);
+    void offLine();
 
 private:
     Ui::Home *ui;
@@ -54,12 +57,14 @@ private:
     QHash<QString, UserItem* > usernameItem;
     QHash<QString,QList<Message> > messageList;
     QHash<QString,QTime> userTime;
+    QString randomString();
 signals:
     void startThread();
-    void sendMsg(QString,QString,QString,QString);
+    void sendMsg(QString,QString,QString,QString,QString);
     void sendImg(QString,QString,QString,QString);
     void sendFile(QString,QString,QString,QString);
     void creatGroup(QString,QString,QList<QString>);
+    void changeProfile(QString,QString);
 private slots:
     void on_pushButton_clicked();
     void on_pushButton_2_clicked();
@@ -67,6 +72,7 @@ private slots:
     void on_pushButton_3_clicked();
     void on_pushButton_10_clicked();
     void on_pushButton_4_clicked();
+    void on_pushButton_6_clicked();
 };
 
 #endif // HOME_H

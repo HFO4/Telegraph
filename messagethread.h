@@ -18,6 +18,7 @@ public:
     QString userName;
     QString realName;
     QString nowFileName;
+    QString currentUm;
     qint64 totalSize;
     QFile* file;
 private:
@@ -30,20 +31,25 @@ private:
     void imgHandler(QJsonObject data);
     void fileHandler(QJsonObject data);
     void broadcastHandler(QJsonObject data);
+    QString randomString();
     void newGroupHandler(QJsonObject data);
 signals:
     void updateList(QJsonObject);
     void newMsg(Message*);
     void updateStatus(int,QString);
-    void newSendFile(QString,qint64,QString);
+    void newSendFile(QString,qint64,QString,QString);
     void setProgress(QString,qint64,qint64);
     void newJoinedGroup(QString);
+    void offLine();
+    void backMsg(QString,QString);
 public slots:
-    void sendMsg(QString to,QString body,QString type,QString from);
+    void sendMsg(QString to,QString body,QString type,QString from,QString mid);
     void sendImg(QString to,QString,QString from,QString);
     void sendFile(QString to,QString,QString from,QString);
     void createGroup(QString,QString,QList<QString>);
     void Download(QString,QString,qint64);
+    void changeProfile(QString,QString);
+    void withDraw(QString);
 public slots:
 };
 

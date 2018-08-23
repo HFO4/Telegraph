@@ -5,7 +5,7 @@
 #-------------------------------------------------
 
 QT       += core gui websockets webenginewidgets
-QT      += sql network
+QT      += network
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = Login
@@ -35,7 +35,8 @@ SOURCES += \
     dialog.cpp \
     purchase.cpp \
     filecontext.cpp \
-    creatgroup.cpp
+    creatgroup.cpp \
+    dialog/editprofile.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -48,7 +49,8 @@ HEADERS += \
     dialog.h \
     purchase.h \
     filecontext.h \
-    creatgroup.h
+    creatgroup.h \
+    dialog/editprofile.h
 
 FORMS += \
         mainwindow.ui \
@@ -57,7 +59,8 @@ FORMS += \
     useritem.ui \
     dialog.ui \
     purchase.ui \
-    creatgroup.ui
+    creatgroup.ui \
+    dialog/editprofile.ui
 
 RESOURCES += \
     res.qrc

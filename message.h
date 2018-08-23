@@ -25,6 +25,7 @@ public:
     qint64 total;
     QString fileName;
     QTime time;
+    QString mid;
     bool selfsend;
     void setTime(QString);
 };

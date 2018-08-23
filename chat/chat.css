@@ -519,3 +519,13 @@ body {
 .link>a{
   color: #fff;
 }
+.withDraw{
+  text-align: center;
+  width: 200px;
+  margin-left: auto;
+  margin: 10px auto;
+  padding: 3px;
+  background-color: #7d7d7d;
+  color: white;
+  border-radius: 6px;
+}

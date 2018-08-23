@@ -1,6 +1,8 @@
 ﻿#include "creatgroup.h"
 #include "ui_creatgroup.h"
 
+#include <QDebug>
+
 CreatGroup::CreatGroup(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::CreatGroup)
@@ -50,5 +52,6 @@ void CreatGroup::on_pushButton_2_clicked()
 
 void CreatGroup::on_buttonBox_accepted()
 {
+    qDebug()<<"newGroup-1";
     groupName = ui->lineEdit->text();
 }

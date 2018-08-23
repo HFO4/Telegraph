@@ -34,9 +34,25 @@ Home::Home(QWidget *parent) :
     ui->verticalLayout_2->addWidget(chat);
     connect(ui->listWidget,&QListWidget::itemSelectionChanged,this,&Home::changeSelected);
 }
+
+QString Home::randomString(){
+        int max = 8;
+        QString tmp = QString("0123456789ABCDEFGHIJKLMNOPQRSTUVWZYZ");
+        QString str = QString();
+        QTime t;
+        t= QTime::currentTime();
+        qsrand(t.msec()+t.second()*1000);
+        for(int i=0;i<max;i++) {
+            int ir = qrand()%tmp.length();
+            str[i] = tmp.at(ir);
+        }
+        return str;
+}
+
 void::Home::changeSelected(){
     UserItem* currentItem = (UserItem*)ui->listWidget->itemWidget(ui->listWidget->currentItem());
     currentUser = currentItem->userName;
+    messageThread->currentUm = currentUser;
     chat->page()->runJavaScript("Clear()");
     currentItem->readAll();
     if(!messageList.contains(currentUser)){
@@ -51,11 +67,11 @@ void::Home::changeSelected(){
                         userTime[msg.to] = msg.time;
                         insertTime(msg.time);
                     }
-                    chat->page()->runJavaScript("addSelfImgMsg('"+msg.body.toHtmlEscaped()+"','"+msg.avatar+"')");
+                    chat->page()->runJavaScript("addSelfImgMsg('"+msg.body.toHtmlEscaped()+"','"+msg.avatar+"','"+msg.mid+"')");
                 }else{
                     if(currentUser == msg.from){
                         qDebug()<<"new Msg";
-                        chat->page()->runJavaScript("addImgMsg('"+msg.body.toHtmlEscaped()+"','"+usernameAvatar[msg.avatarName]+"')");
+                        chat->page()->runJavaScript("addImgMsg('"+msg.body.toHtmlEscaped()+"','"+usernameAvatar[msg.avatarName]+"','"+msg.mid+"')");
                         if(userTime[msg.from].toString("mm")!=msg.time.toString("mm")){
                             userTime[msg.from] = msg.time;
                             insertTime(msg.time);
@@ -70,7 +86,7 @@ void::Home::changeSelected(){
                         userTime[msg.to] = msg.time;
                         insertTime(msg.time);
                     }
-                    chat->page()->runJavaScript("newSendFile('"+msg.fileName+"',"+QString::number(msg.total)+",'"+msg.body+"','"+msg.avatar+"')");
+                    chat->page()->runJavaScript("newSendFile('"+msg.fileName+"',"+QString::number(msg.total)+",'"+msg.body+"','"+msg.avatar+"','"+msg.mid+"')");
                     setProgress(msg.body,100,100);
                 }else{
                     if(currentUser == msg.from){
@@ -78,7 +94,7 @@ void::Home::changeSelected(){
                             userTime[msg.to] = msg.time;
                             insertTime(msg.time);
                         }
-                        chat->page()->runJavaScript("newReceiveFile('"+msg.fileName+"',"+QString::number(msg.total)+",'"+msg.body+"','"+usernameAvatar[msg.avatarName]+"')");
+                        chat->page()->runJavaScript("newReceiveFile('"+msg.fileName+"',"+QString::number(msg.total)+",'"+msg.body+"','"+usernameAvatar[msg.avatarName]+"','"+msg.mid+"')");
                     }else{
 
                     }
@@ -89,14 +105,14 @@ void::Home::changeSelected(){
                         userTime[msg.to] = msg.time;
                         insertTime(msg.time);
                     }
-                    chat->page()->runJavaScript("addSelfTextMsg('"+msg.body.toHtmlEscaped()+"','"+msg.avatar+"')");
+                    chat->page()->runJavaScript("addSelfTextMsg('"+msg.body.toHtmlEscaped()+"','"+msg.avatar+"','"+msg.mid+"')");
                 }else{
                     if(currentUser == msg.from){
                         if(userTime[msg.from].toString("mm")!=msg.time.toString("mm")){
                             userTime[msg.from] = msg.time;
                             insertTime(msg.time);
                         }
-                        chat->page()->runJavaScript("addTextMsg('"+msg.body.toHtmlEscaped()+"','"+usernameAvatar[msg.avatarName]+"')");
+                        chat->page()->runJavaScript("addTextMsg('"+msg.body.toHtmlEscaped()+"','"+usernameAvatar[msg.avatarName]+"','"+msg.mid+"')");
                     }else{
 
                     }
@@ -104,8 +120,8 @@ void::Home::changeSelected(){
             }
         }
     }
-
 }
+
 void Home::startListen(){
     thread = new QThread(this);
     messageThread = new MessageThread();
@@ -117,15 +133,19 @@ void Home::startListen(){
     connect(messageThread,SIGNAL(newMsg(Message*)),this,SLOT(newMsg(Message*)));
     emit startThread();
     thread->start();
-    connect(this,SIGNAL(sendMsg(QString,QString,QString,QString)),messageThread,SLOT(sendMsg(QString,QString,QString,QString)));
+    connect(this,SIGNAL(sendMsg(QString,QString,QString,QString,QString)),messageThread,SLOT(sendMsg(QString,QString,QString,QString,QString)));
     connect(this,SIGNAL(sendImg(QString,QString,QString,QString)),messageThread,SLOT(sendImg(QString,QString,QString,QString)));
     connect(this,SIGNAL(sendFile(QString,QString,QString,QString)),messageThread,SLOT(sendFile(QString,QString,QString,QString)));
     connect(this,SIGNAL(creatGroup(QString,QString,QList<QString>)),messageThread,SLOT(createGroup(QString,QString,QList<QString>)));
-    connect(messageThread,SIGNAL(newSendFile(QString,qint64,QString)),this,SLOT(sendNewFile(QString,qint64,QString)));
+    connect(this,SIGNAL(changeProfile(QString,QString)),messageThread,SLOT(changeProfile(QString,QString)));
+    connect(messageThread,SIGNAL(newSendFile(QString,qint64,QString,QString)),this,SLOT(sendNewFile(QString,qint64,QString,QString)));
     connect(messageThread,SIGNAL(setProgress(QString,qint64,qint64)),this,SLOT(setProgress(QString,qint64,qint64)));
     connect(messageThread,SIGNAL(updateStatus(int,QString)),this,SLOT(updateStatus(int,QString)));
     connect(messageThread,SIGNAL(newJoinedGroup(QString)),this,SLOT(newJoinedGroup(QString)));
+    connect(messageThread,SIGNAL(offLine()),this,SLOT(offLine()));
     connect(webContext,SIGNAL(doDownload(QString,QString,qint64)),messageThread,SLOT(Download(QString,QString,qint64)));
+    connect(webContext,SIGNAL(withDrawMsg(QString)),messageThread,SLOT(withDraw(QString)));
+    connect(messageThread,SIGNAL(backMsg(QString,QString)),this,SLOT(backMsg(QString,QString)));
 }
 
 void Home::newJoinedGroup(QString grouoname){
@@ -205,6 +225,17 @@ void Home::updateStatus(int status,QString user){
     }
 }
 
+void Home::backMsg(QString mid,QString um){
+    QString isSelf = (um=="current") ? "yes":"np";
+    chat->page()->runJavaScript("withDrawMsg('"+mid+"','"+isSelf+"')");
+    um=(um=="current")?currentUser:um;
+    for(int i = 0 ; i < messageList[um].size() ; i++) {
+        if(messageList[um][i].mid==mid){
+            messageList[um].removeAt(i);
+        }
+    }
+}
+
 void Home::newMsg(Message * msg){
     if(msg->type=="img"){
         if(msg->selfsend){
@@ -212,11 +243,11 @@ void Home::newMsg(Message * msg){
                 userTime[msg->to] = msg->time;
                 insertTime(msg->time);
             }
-            chat->page()->runJavaScript("addSelfImgMsg('"+msg->body.toHtmlEscaped()+"','"+msg->avatar+"')"); 
+            chat->page()->runJavaScript("addSelfImgMsg('"+msg->body.toHtmlEscaped()+"','"+msg->avatar+"','"+msg->mid+"')");
         }else{
             if(currentUser == msg->from){
                 qDebug()<<"new Msg";
-                chat->page()->runJavaScript("addImgMsg('"+msg->body.toHtmlEscaped()+"','"+usernameAvatar[msg->avatarName]+"')");
+                chat->page()->runJavaScript("addImgMsg('"+msg->body.toHtmlEscaped()+"','"+usernameAvatar[msg->avatarName]+"','"+msg->mid+"')");
                 if(userTime[msg->from].toString("mm")!=msg->time.toString("mm")){
                     userTime[msg->from] = msg->time;
                     insertTime(msg->time);
@@ -231,14 +262,14 @@ void Home::newMsg(Message * msg){
                 userTime[msg->to] = msg->time;
                 insertTime(msg->time);
             }
-            chat->page()->runJavaScript("newSendFile('"+msg->fileName+"',"+QString::number(msg->total)+",'"+msg->body+"','"+msg->avatar+"')");
+            chat->page()->runJavaScript("newSendFile('"+msg->fileName+"',"+QString::number(msg->total)+",'"+msg->body+"','"+msg->avatar+"','"+msg->mid+"')");
         }else{
             if(currentUser == msg->from){
                 if(userTime[msg->from].toString("mm")!=msg->time.toString("mm")){
                     insertTime(msg->time);
                     userTime[msg->from] = msg->time;
                 }
-                chat->page()->runJavaScript("newReceiveFile('"+msg->fileName+"',"+QString::number(msg->total)+",'"+msg->body+"','"+usernameAvatar[msg->avatarName]+"')");
+                chat->page()->runJavaScript("newReceiveFile('"+msg->fileName+"',"+QString::number(msg->total)+",'"+msg->body+"','"+usernameAvatar[msg->avatarName]+"','"+msg->mid+"')");
             }else{
                 usernameItem[msg->from]->addUnreadMessage();
             }
@@ -249,14 +280,14 @@ void Home::newMsg(Message * msg){
                 userTime[msg->to] = msg->time;
                 insertTime(msg->time);
             }
-            chat->page()->runJavaScript("addSelfTextMsg('"+msg->body.toHtmlEscaped()+"','"+msg->avatar+"')");
+            chat->page()->runJavaScript("addSelfTextMsg('"+msg->body.toHtmlEscaped()+"','"+msg->avatar+"','"+msg->mid+"')");
         }else{
             if(currentUser == msg->from){
                 if(userTime[msg->from].toString("mm")!=msg->time.toString("mm")){
                     insertTime(msg->time);
                     userTime[msg->from] = msg->time;
                 }
-                chat->page()->runJavaScript("addTextMsg('"+msg->body.toHtmlEscaped()+"','"+usernameAvatar[msg->avatarName]+"')");
+                chat->page()->runJavaScript("addTextMsg('"+msg->body.toHtmlEscaped()+"','"+usernameAvatar[msg->avatarName]+"','"+msg->mid+"')");
             }else{
 
                 usernameItem[msg->from]->addUnreadMessage();
@@ -269,10 +300,11 @@ void Home::newMsg(Message * msg){
 
 }
 
-void Home::sendNewFile(QString filename, qint64 fsize, QString id){
+void Home::sendNewFile(QString filename, qint64 fsize, QString id,QString mid){
     Message *msg = new Message("file",id,userName,currentUser,1);
     msg->fileName = filename;
     msg->total = fsize;
+    msg->mid = mid;
     msg->setTime(QTime::currentTime().toString("hh:mm"));
     msg->avatar = usernameAvatar[userName];
     newMsg(msg);
@@ -298,8 +330,9 @@ void Home::on_pushButton_clicked()
     Message *msg = new Message("text",msgBody,userName,currentUser,1);
     msg->setTime(QTime::currentTime().toString("hh:mm"));
     msg->avatar = usernameAvatar[userName];
+    msg->mid = randomString();
     newMsg(msg);
-    emit sendMsg(currentUser,msgBody,"text",userName);
+    emit sendMsg(currentUser,msgBody,"text",userName,msg->mid);
     ui->textEdit_2->setPlainText("");
 }
 
@@ -307,7 +340,7 @@ void Home::on_pushButton_2_clicked()
 {
     Dialog* dlg = new Dialog;
     dlg->setWindowTitle("充值");
-    dlg->setAttribute(Qt::WA_DeleteOnClose);
+    //dlg->setAttribute(Qt::WA_DeleteOnClose);
     if(dlg->exec()==QDialog::Accepted){
         purchase = new Purchase();
         purchase->init(dlg->num,userName);
@@ -316,6 +349,7 @@ void Home::on_pushButton_2_clicked()
     }else{
 
     }
+    delete dlg;
 }
 
 void Home::on_pushButton_9_clicked()
@@ -344,7 +378,7 @@ void Home::on_pushButton_10_clicked()
 void Home::on_pushButton_4_clicked()
 {
     CreatGroup* dlg = new CreatGroup;
-    dlg->setAttribute(Qt::WA_DeleteOnClose);
+    //dlg->setAttribute(Qt::WA_DeleteOnClose);
     dlg->Init(usernameAvatar,userName);
     if(dlg->exec()==QDialog::Accepted){
         if(dlg->groupName.isEmpty()||dlg->selected.count()==0){
@@ -355,4 +389,23 @@ void Home::on_pushButton_4_clicked()
     }else{
 
     }
+    delete dlg;
+}
+
+void Home::offLine(){
+    QMessageBox::information(NULL, "错误", "与服务端断开连接，请尝试重新登录");
+    close();
+}
+
+void Home::on_pushButton_6_clicked()
+{
+    EditProfile* dlg = new EditProfile;
+    //dlg->setAttribute(Qt::WA_DeleteOnClose);
+    dlg->Init(userName);
+    if(dlg->exec()==QDialog::Accepted){
+        emit changeProfile(dlg->userName,dlg->passWord);
+    }else{
+
+    }
+    delete dlg;
 }

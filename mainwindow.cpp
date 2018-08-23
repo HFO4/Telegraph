@@ -42,9 +42,9 @@ void MainWindow::on_pushButton_clicked()
     }
     this->setEnabled(false);
     ui->progressBar->show();
-    thread->quit();
-    thread->wait();
-    delete loginThread;
+//    thread->quit();
+//    thread->wait();
+//    delete loginThread;
     loginThread = new LoginThread();
     loginThread->username=username;
     loginThread->password=password;
@@ -61,6 +61,8 @@ void MainWindow::loginFailed(){
     this->setEnabled(true);
     ui->progressBar->hide();
     thread->quit();
+    thread->wait();
+    delete loginThread;
 }
 void MainWindow::loginSuccess(){
     QString md5;
