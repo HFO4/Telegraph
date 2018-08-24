@@ -36,7 +36,8 @@ SOURCES += \
     purchase.cpp \
     filecontext.cpp \
     creatgroup.cpp \
-    dialog/editprofile.cpp
+    dialog/editprofile.cpp \
+    dialog/stylechange.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -50,7 +51,8 @@ HEADERS += \
     purchase.h \
     filecontext.h \
     creatgroup.h \
-    dialog/editprofile.h
+    dialog/editprofile.h \
+    dialog/stylechange.h
 
 FORMS += \
         mainwindow.ui \
@@ -60,7 +62,8 @@ FORMS += \
     dialog.ui \
     purchase.ui \
     creatgroup.ui \
-    dialog/editprofile.ui
+    dialog/editprofile.ui \
+    dialog/stylechange.ui
 
 RESOURCES += \
     res.qrc

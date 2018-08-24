@@ -78,12 +78,20 @@
              <property name="text">
               <string>修改资料</string>
              </property>
+             <property name="icon">
+              <iconset resource="res.qrc">
+               <normaloff>:/image/C:/Users/i/Downloads/profile 2.png</normaloff>:/image/C:/Users/i/Downloads/profile 2.png</iconset>
+             </property>
             </widget>
            </item>
            <item>
             <widget class="QPushButton" name="pushButton_5">
              <property name="text">
               <string>个性化</string>
+             </property>
+             <property name="icon">
+              <iconset resource="res.qrc">
+               <normaloff>:/image/C:/Users/i/Downloads/paint_palette.png</normaloff>:/image/C:/Users/i/Downloads/paint_palette.png</iconset>
              </property>
             </widget>
            </item>

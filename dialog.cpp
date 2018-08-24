@@ -1,11 +1,14 @@
 ﻿#include "dialog.h"
 #include "ui_dialog.h"
-
+#pragma execution_character_set("utf-8")
+#include <QPushButton>
 Dialog::Dialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::Dialog)
 {
     ui->setupUi(this);
+    ui->buttonBox->button(QDialogButtonBox::Ok)->setText("确定");
+    ui->buttonBox->button(QDialogButtonBox::Cancel)->setText("取消");
 }
 
 Dialog::~Dialog()

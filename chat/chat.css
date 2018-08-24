@@ -9,7 +9,7 @@ body {
   text-rendering: optimizeLegibility;
   font-family: '微软雅黑';
   font-weight: 400;
-  background-image: url("https://s17.postimg.org/fr01hfe33/image.jpg");
+  /* background-image: url("C:/Users/i/Desktop/新建文件夹 (2)/Telegram-Wallpaper-Xzymoe/builtin-wallpaper-0.jpg"); */
   background-size: cover;
   background-repeat: none;
   margin: 0px;
@@ -21,7 +21,6 @@ body {
 }
 
 .container {
-  background-color: #fff;
 
 }
 .container .left {

@@ -1,13 +1,16 @@
 ﻿#include "creatgroup.h"
 #include "ui_creatgroup.h"
-
+#include <QPushButton>
 #include <QDebug>
-
+#pragma execution_character_set("utf-8")
 CreatGroup::CreatGroup(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::CreatGroup)
 {
+
     ui->setupUi(this);
+    ui->buttonBox->button(QDialogButtonBox::Ok)->setText("确定");
+    ui->buttonBox->button(QDialogButtonBox::Cancel)->setText("取消");
 }
 
 CreatGroup::~CreatGroup()

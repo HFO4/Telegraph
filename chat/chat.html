@@ -45,6 +45,18 @@
             g_context.withDraw(mid);
         }
 
+        function changeBackground(u){
+            $("<style></style>").text("body{background-image: url(\""+u+"\")!important;background-repeat:no-repeat; background-attachment:fixed}").appendTo($("head"));
+        }
+
+        function changeBackColor(c){
+            $("<style></style>").text("body{background-color: "+c+"!important}").appendTo($("head"));
+        }
+
+        function changeStyle(selfback,selftext,youback,youtext){
+            $("<style></style>").text(".bubble.me{background-color:"+selfback+"!important;color:"+selftext+"!important}.container .right .bubble.me:before{background-color:"+selfback+"!important}.bubble.you{background-color:"+youback+"!important;color:"+youtext+"!important}.container .right .bubble.you:before{background-color:"+youback+"!important}").appendTo($("head"));
+        }
+
         function withDrawMsg(mid,self="yes"){
             if(self=="yes"){
                 msg="您撤回了一条消息";
@@ -97,11 +109,15 @@
         function newSendFile(filename,size,id,avatar,mid){
             $(".empty").remove();
             $(".active-chat").append("<div id=\""+id+"\"><div class=\"line animated fadeInRight fast\" id='"+mid+"' oncontextmenu=\"withDraw('"+mid+"')\"><div class=\"avatar\" style=\"float: right;\"><img src=\"../../avatar/avatars/"+avatar+".jpg\" class=\"avatar\"></div><div class=\"row\"><div class=\"bubble me bb\"><div style=\"display: inline;\"><div style=\"float: left;\"><img src=\"../../image/file-b-17.png\" class='fileicon'></div><div><div class='filename'>"+filename+"</div><div class='filesize'>"+(size/(1024*1024)).toFixed(2)+"Mb</div><div class='progress'><div class='progress-bar' id='"+id+"p'></div></div></div></div></div></div></div></div>");
+            var h = $(document).height();
+            $(document).scrollTop(h);
         }
 
         function newReceiveFile(filename,size,id,avatar,mid){
             $(".empty").remove();
             $(".active-chat").append("<div id=\""+mid+"\"><div class=\"line animated fadeInLeft fast\"><div class=\"avatar\" style=\"float: left;\"><img src=\"../../avatar/avatars/"+avatar+".jpg\" class=\"avatar\"></div><div class=\"rowl\"><div class=\"bubble you bb\"><div style=\"display: inline;\"><div style=\"float: left;\"><img src=\"../../image/file-b-17.png\" class='fileicon'></div><div><div class='filename'>"+filename+"</div><div class='filesizew'>"+(size/(1024*1024)).toFixed(2)+"Mb</div><div class=\"link\" id='"+id.replace("/","")+"l'><a href=\"#\" onclick='g_context.Download(\""+id+"\",\""+filename+"\","+size+");'>下载</a></div><div class=\"link\" id='"+id.replace("/","")+"o' style=\"display:none\"><a href=\"#\" onclick='g_context.Open(\""+filename+"\");'>打开</a></div><div class='progress' style=\"display:none\" id='"+id.replace("/","")+"pb'><div class='progress-bar' id='"+id.replace("/","")+"p'></div></div></div></div></div></div></div></div>");
+            var h = $(document).height();
+            $(document).scrollTop(h);
         }
 
         function setProgress(id,sended,total){

@@ -409,3 +409,29 @@ void Home::on_pushButton_6_clicked()
     }
     delete dlg;
 }
+
+void Home::changeStyle(QString selfback, QString selftexr, QString youback, QString youtext){
+    chat->page()->runJavaScript("changeStyle('"+selfback+"','"+selftexr+"','"+youback+"','"+youtext+"')");
+}
+
+void Home::changeBackground(QString img){
+     chat->page()->runJavaScript("changeBackground('"+img+"')");
+}
+
+void Home::changeBackColor(QString color){
+    chat->page()->runJavaScript("changeBackColor('"+color+"')");
+}
+
+void Home::on_pushButton_5_clicked()
+{
+    StyleChange* dlg = new StyleChange;
+    connect(dlg,SIGNAL(changeStyle(QString,QString,QString,QString)),this,SLOT(changeStyle(QString,QString,QString,QString)),Qt::UniqueConnection);
+    connect(dlg,SIGNAL(changeBackground(QString)),this,SLOT(changeBackground(QString)),Qt::UniqueConnection);
+    connect(dlg,SIGNAL(changeBackColor(QString)),this,SLOT(changeBackColor(QString)),Qt::UniqueConnection);
+    //dlg->setAttribute(Qt::WA_DeleteOnClose);
+    if(dlg->exec()==QDialog::Accepted){
+    }else{
+
+    }
+    delete dlg;
+}

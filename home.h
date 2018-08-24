@@ -9,6 +9,7 @@
 #include "creatgroup.h"
 #include "filecontext.h"
 #include "dialog/editprofile.h"
+#include "dialog/stylechange.h"
 
 #include <QWidget>
 #include <QThread>
@@ -41,6 +42,9 @@ public slots:
     void newJoinedGroup(QString);
     void backMsg(QString,QString);
     void offLine();
+    void changeStyle(QString selfback,QString selftexr,QString youback,QString youtext);
+    void changeBackground(QString);
+    void changeBackColor(QString);
 
 private:
     Ui::Home *ui;
@@ -73,6 +77,7 @@ private slots:
     void on_pushButton_10_clicked();
     void on_pushButton_4_clicked();
     void on_pushButton_6_clicked();
+    void on_pushButton_5_clicked();
 };
 
 #endif // HOME_H
