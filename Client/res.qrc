@@ -1,0 +1,55 @@
+<RCC>
+    <qresource prefix="/image">
+        <file>ban.png</file>
+        <file>ico</file>
+        <file>C:/Users/i/Downloads/文档类型-图片.png</file>
+        <file>C:/Users/i/Downloads/文件.png</file>
+        <file>C:/Users/i/Downloads/纸飞机.png</file>
+        <file>C:/Users/i/Downloads/ic_cleaning_junk.png</file>
+        <file>file-b-17.png</file>
+        <file>add.png</file>
+        <file>cash.png</file>
+        <file>C:/Users/i/Downloads/profile 2.png</file>
+        <file>C:/Users/i/Downloads/paint_palette.png</file>
+        <file>C:/Users/i/Downloads/铃铛带圈.png</file>
+        <file>C:/Users/i/Downloads/日历.png</file>
+        <file>抖动1.png</file>
+        <file>do.png</file>
+        <file>bg/redpacknormal.png</file>
+        <file>bg/red.png</file>
+        <file>bg/result.png</file>
+        <file>smile.png</file>
+        <file>sad.png</file>
+        <file>bg/blue.png</file>
+        <file>语音.png</file>
+        <file>语音w.png</file>
+        <file>麦克风.png</file>
+        <file>bg/black.png</file>
+        <file>麦克风ico.png</file>
+        <file>窗口.png</file>
+        <file>C:/Users/i/Downloads/bqb.png</file>
+    </qresource>
+    <qresource prefix="/avatar">
+        <file>avatars/1.jpg</file>
+        <file>avatars/1b.jpg</file>
+        <file>avatars/group.jpg</file>
+        <file>avatars/2.jpg</file>
+        <file>avatars/2b.jpg</file>
+        <file>avatars/3.jpg</file>
+        <file>avatars/3b.jpg</file>
+        <file>avatars/4.jpg</file>
+        <file>avatars/4b.jpg</file>
+        <file>avatars/5.jpg</file>
+        <file>avatars/5b.jpg</file>
+        <file>avatars/6.jpg</file>
+        <file>avatars/6b.jpg</file>
+        <file>红包.png</file>
+    </qresource>
+    <qresource prefix="/html">
+        <file>chat/chat.css</file>
+        <file>chat/chat.html</file>
+        <file>chat/jquery.min.js</file>
+        <file>chat/animate.css</file>
+        <file>qwebchannel.js</file>
+    </qresource>
+</RCC>
