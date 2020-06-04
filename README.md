@@ -1,5 +1,5 @@
 # Telegraph
-一个丢人现眼的IM，使用Qt构建。为了学校的实训项目写的，最终目标是为了答辩展示，故不可用于生产环境使用。数据库为MySQL，使用WebSocket通讯。
+一个丢人现眼的IM，使用Qt构建。数据库为MySQL，使用WebSocket通讯。
 
 [![Snipaste_2018-08-20_09-44-16.png](https://i.loli.net/2018/08/20/5b7a1d028a4a0.png)](https://i.loli.net/2018/08/20/5b7a1d028a4a0.png)
 
